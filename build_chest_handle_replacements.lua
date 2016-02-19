@@ -142,6 +142,7 @@ build_chest.replacements_get_list_formspec = function( pos, selected_row )
 	-- add the proceed-button as soon as all unkown materials have been replaced
 	if( may_proceed ) then
 		formspec = formspec.."button[9.9,9.0;2.0,0.5;proceed_with_scaffolding;Proceed]";
+		formspec = formspec.."button[9.9,2.0;2.0,0.5;convert_to_mts;Save as MTS]";
 	else
 		formspec = formspec.."button[9.9,9.0;3.2,0.5;replace_rest_with_air;Suggest air for unknown]";
 	end

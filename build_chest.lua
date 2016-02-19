@@ -577,6 +577,17 @@ build_chest.on_receive_fields = function(pos, formname, fields, player)
 		build_chest.replacements_apply_for_group( pos, meta, 'roof',    fields.roof_selection,    fields.set_roof );
 		fields.set_roof    = nil;
 
+	elseif( fields.convert_to_mts ) then
+		local building_name = meta:get_string('building_name');
+		if not building_name then
+			return "No file name given. Cannot find the schematic.";
+		end
+
+		local binfo = handle_schematics.analyze_file( building_name, nil, building_name );
+		if not binfo then
+			return "Failed to import schematic. Only .mts and .we are supported!";
+		end
+		return "Converted to MTS"
 
 	elseif( fields.proceed_with_scaffolding ) then
 		local building_name = meta:get_string('building_name');
@@ -620,7 +631,7 @@ mirror = nil;
 		local backup_file   = meta:get_string( 'backup' );
 		if( start_pos and end_pos and start_pos.x and end_pos.x and backup_file and backup_file ~= "" ) then
 			if( save_restore.file_exists( 'schems/'..backup_file..'.mts' )) then
-				filename = minetest.get_worldpath()..'/schems/'..backup_file..'.mts';
+				local filename = minetest.get_worldpath()..'/schems/'..backup_file..'.mts';
 				minetest.place_schematic( start_pos, filename, "0", {}, true );
 				-- no rotation needed - the metadata can be applied as-is (with the offset applied)
 				handle_schematics.restore_meta( backup_file, nil, start_pos, end_pos, 0, nil);

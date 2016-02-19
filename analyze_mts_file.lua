@@ -175,7 +175,9 @@ handle_schematics.store_mts_file = function( path, data )
 
 	data.nodenames[ #data.nodenames+1 ] = 'air';
 
-	local file, err = save_restore.file_access(path..'.mts', "wb")
+	print('Enter handle_schematics.store_mts_file for: '..path..'.mts'); 
+	-- local file, err = save_restore.file_access(path..'.mtu', "wb")
+	local file = io.open(path..'.mts', "w")
 	if (file == nil) then
 		return nil
 	end
@@ -232,7 +234,12 @@ handle_schematics.store_mts_file = function( path, data )
 	for z = 1, data.size.z do
 	for y = 1, data.size.y do
 	for x = 1, data.size.x do
-		node_data = node_data..string.char( 255 );
+		local a = data.scm_data_cache[y][x][z];
+		if( a and type( a) == 'table' ) then
+			node_data = node_data..string.char( 255 );
+		else
+			node_data = node_data..string.char( 0 );
+		end
 	end
 	end
 	end
@@ -260,8 +267,12 @@ end
 
 -- read .mts and .we files
 handle_schematics.analyze_file = function( file_name, origin_offset, store_as_mts )
-	local res  = handle_schematics.analyze_mts_file( file_name ); 
-	-- alternatively, read the mts file
+	local res  = false
+	if not store_as_mts then
+		-- don't read the mts file if planning to write an mts file
+		-- alternatively, read the mts file
+		 res  = handle_schematics.analyze_mts_file( file_name ); 
+	end
 	if( not( res )) then
 		res = handle_schematics.analyze_we_file( file_name, origin_offset );
 		if( not( res )) then
